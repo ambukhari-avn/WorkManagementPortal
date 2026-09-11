@@ -1,0 +1,79 @@
+<!-- src/Web/src/app/features/projects/project-list/project-list.component.html -->
+<div class="project-list-page">
+  <div class="page-header">
+    <div>
+      <h1>Projects</h1>
+      <p>Manage and track all your projects</p>
+    </div>
+    <button class="btn btn-primary" routerLink="/projects/new">+ New Project</button>
+  </div>
+
+  <div class="filters-bar">
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Search projects..."
+      [(ngModel)]="search"
+      (ngModelChange)="onSearchChange()"
+    />
+    <select class="form-select filter-select" [(ngModel)]="archivedFilter" (ngModelChange)="onFilterChange()">
+      <option value="">All Projects</option>
+      <option value="false">Active</option>
+      <option value="true">Archived</option>
+    </select>
+  </div>
+
+  <div class="table-card">
+    @if (loading()) {
+      <div class="empty-state">Loading projects...</div>
+    } @else if (projects().length === 0) {
+      <div class="empty-state">No projects found.</div>
+    } @else {
+      <table class="project-table">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Created By</th>
+            <th>Created</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (project of projects(); track project.id) {
+            <tr (click)="openProject(project.id)">
+              <td>
+                <div class="project-cell">
+                  <div class="project-avatar">{{ initials(project.title) }}</div>
+                  <div>
+                    <strong>{{ project.title }}</strong>
+                    @if (project.description) {
+                      <span class="description">{{ project.description }}</span>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td>{{ project.createdByName }}</td>
+              <td>{{ project.createdAt | date: 'mediumDate' }}</td>
+              <td>
+                <span class="badge" [class.bg-success]="!project.isArchived" [class.bg-secondary]="project.isArchived">
+                  {{ project.isArchived ? 'Archived' : 'Active' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="pagination-bar">
+        <span class="pagination-info">
+          Showing {{ (page - 1) * pageSize + 1 }}–{{ Math.min(page * pageSize, totalCount()) }} of {{ totalCount() }}
+        </span>
+        <div class="pagination-controls">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="page === 1" (click)="goToPage(page - 1)">Previous</button>
+          <span class="page-indicator">{{ page }} / {{ totalPages }}</span>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="page === totalPages" (click)="goToPage(page + 1)">Next</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

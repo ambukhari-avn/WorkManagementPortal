@@ -1,0 +1,109 @@
+// src/Web/src/app/features/projects/project-detail/project-detail.component.scss
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: #71717a;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+
+  .header-info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .project-avatar {
+      width: 56px; height: 56px;
+      background: #6366f1;
+      color: white;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.2rem; }
+    p { color: #71717a; margin: 0; font-size: 0.88rem; }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+}
+
+.meta-row {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.82rem;
+  color: #71717a;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #f4f4f5;
+}
+
+.card-section {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+
+  h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; }
+}
+
+.add-member-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  max-width: 420px;
+
+  .form-select {
+    flex: 1;
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.88rem;
+  }
+
+  .btn-primary {
+    background-color: #6366f1;
+    border: none;
+    white-space: nowrap;
+
+    &:disabled { opacity: 0.5; }
+  }
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f4f4f5;
+
+  &:last-child { border-bottom: none; }
+
+  .member-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .member-avatar {
+      width: 36px; height: 36px;
+      background: #e4e4e7;
+      color: #4b4b5a;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+    }
+
+    strong { display: block; font-size: 0.9rem; }
+    span { font-size: 0.78rem; color: #a1a1aa; }
+  }
+}

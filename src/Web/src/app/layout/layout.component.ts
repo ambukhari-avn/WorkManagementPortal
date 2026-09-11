@@ -1,6 +1,6 @@
 // src/Web/src/app/layout/layout.component.ts
 import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import {
   ContainerComponent,
   SidebarComponent as CoreSidebarComponent,
@@ -15,6 +15,7 @@ import { AuthService } from '../shared/services/auth.service';
   standalone: true,
   imports: [
     RouterOutlet,
+    RouterLink,
     ContainerComponent,
     CoreSidebarComponent,
     SidebarNavComponent,
