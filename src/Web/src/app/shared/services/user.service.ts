@@ -7,9 +7,18 @@ import { User } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private http = inject(HttpClient);
+    private http = inject(HttpClient);
 
-  getAll(): Observable<User[]> {
-    return this.http.get<User[]>(`${environment.apiUrl}/users`);
-  }
+    getAll(): Observable<User[]> {
+        return this.http.get<User[]>(`${environment.apiUrl}/users`);
+    }
+
+    updateRole(userId: number, role: string): Observable<void> {
+        return this.http.patch<void>(`${environment.apiUrl}/users/${userId}/role`, { role });
+    }
+
+    delete(userId: number): Observable<void> {
+        return this.http.delete<void>(`${environment.apiUrl}/users/${userId}`);
+    }
 }
+

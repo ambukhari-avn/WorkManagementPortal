@@ -9,4 +9,6 @@ public interface IUserService
     Task<List<UserDto>> GetAllAsync();
     Task<UserDto> CreateAsync(CreateUserDto dto);
     Task UpdateAsync(int id, UpdateUserDto dto);
+    Task UpdateRoleAsync(int userId, string role);
+    Task DeleteAsync(int userId);
 }

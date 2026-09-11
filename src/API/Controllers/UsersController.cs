@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using EnterpriseWorkManagementPortal.Application.Interfaces;
 using EnterpriseWorkManagementPortal.Application.DTOs;
-
+using Microsoft.AspNetCore.Authorization;
 namespace EnterpriseWorkManagementPortal.API.Controllers;
 
 [ApiController]
@@ -29,6 +29,22 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> Update(int id, UpdateUserDto dto)
     {
         await _userService.UpdateAsync(id, dto);
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPatch("{id}/role")]
+    public async Task<IActionResult> UpdateRole(int id, UpdateUserRoleDto dto)
+    {
+        await _userService.UpdateRoleAsync(id, dto.Role);
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _userService.DeleteAsync(id);
         return NoContent();
     }
 }

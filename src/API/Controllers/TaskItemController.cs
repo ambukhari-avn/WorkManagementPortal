@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using EnterpriseWorkManagementPortal.Application.Interfaces;
 using EnterpriseWorkManagementPortal.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 // using EnterpriseWorkManagementPortal.Application.Common; 
 
 namespace EnterpriseWorkManagementPortal.API.Controllers;
@@ -42,5 +43,12 @@ public class TaskItemsController : ControllerBase
     {
         await _taskItemService.DeleteAsync(id);
         return NoContent();
+    }
+
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetMine([FromQuery] string? status, [FromQuery] string? priority, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        return Ok(await _taskItemService.GetMyTasksAsync(userId, status, priority, page, pageSize));
     }
 }

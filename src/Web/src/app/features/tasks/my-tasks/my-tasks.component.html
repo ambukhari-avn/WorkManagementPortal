@@ -1,0 +1,61 @@
+<!-- src/Web/src/app/features/tasks/my-tasks/my-tasks.component.html -->
+<div class="task-list-page">
+  <div class="page-header">
+    <div>
+      <h1>My Tasks</h1>
+      <p>Tasks assigned to you across all projects</p>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <select class="form-select" [(ngModel)]="statusFilter" (ngModelChange)="loadTasks()">
+      <option value="">All Statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="InProgress">In Progress</option>
+      <option value="Done">Done</option>
+    </select>
+    <select class="form-select" [(ngModel)]="priorityFilter" (ngModelChange)="loadTasks()">
+      <option value="">All Priorities</option>
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+  </div>
+
+  <div class="table-card">
+    @if (loading()) {
+      <div class="empty-state">Loading tasks...</div>
+    } @else if (tasks().length === 0) {
+      <div class="empty-state">No tasks assigned to you.</div>
+    } @else {
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Due Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track task.id) {
+            <tr (click)="openTask(task.id)">
+              <td><strong>{{ task.title }}</strong></td>
+              <td>
+                <span class="priority-badge" [class]="'priority-' + task.priority.toLowerCase()">
+                  {{ task.priority }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [class]="'status-' + task.status.toLowerCase()">
+                  {{ task.status }}
+                </span>
+              </td>
+              <td>{{ task.dueDate ? (task.dueDate | date: 'mediumDate') : '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

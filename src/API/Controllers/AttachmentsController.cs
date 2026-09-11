@@ -29,4 +29,11 @@ public class AttachmentsController : ControllerBase
         await _attachmentService.DeleteAsync(id);
         return NoContent();
     }
+
+    [HttpGet("attachments/{id}/download")]
+    public async Task<IActionResult> Download(int id)
+    {
+        var (stream, fileName, contentType) = await _attachmentService.DownloadAsync(id);
+        return File(stream, contentType, fileName);
+    }
 }

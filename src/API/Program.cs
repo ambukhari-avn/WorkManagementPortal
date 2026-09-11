@@ -90,8 +90,16 @@ builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
 var app = builder.Build();
 
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<SecureHeadersMiddleware>();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "UploadedFiles")),
+    RequestPath = "/UploadedFiles"
+});
 
 app.UseSwagger();
 app.UseSwaggerUI();
