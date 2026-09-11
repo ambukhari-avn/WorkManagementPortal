@@ -1,0 +1,71 @@
+// src/Web/src/app/features/tasks/task-form/task-form.component.scss
+.form-page { display: flex; justify-content: center; padding: 1rem 0; }
+
+.form-card {
+  width: 100%;
+  max-width: 560px;
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+
+  h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem; }
+  p { color: #71717a; font-size: 0.88rem; margin-bottom: 1.5rem; }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+
+  .form-group { flex: 1; }
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b4b5a;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-control, .form-select {
+    width: 100%;
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.9rem;
+
+    &:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+    }
+  }
+}
+
+.field-error { display: block; color: #dc2626; font-size: 0.8rem; margin-top: 0.35rem; }
+
+.alert-danger {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+
+  .btn-primary {
+    background-color: #6366f1;
+    border: none;
+    &:disabled { opacity: 0.55; }
+  }
+}

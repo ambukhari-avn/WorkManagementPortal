@@ -55,5 +55,15 @@ public class AttachmentService : IAttachmentService
         _logger.LogWarning("Attachment {AttachmentId} deleted", id);
     }
 
+    public async Task<(Stream, string, string)> DownloadAsync(int attachmentId)
+    {
+
+        var attachment = await _context.Attachments.FindAsync(attachmentId)
+            ?? throw new KeyNotFoundException("Attachment not found.");
+
+        var stream = await _fileStorage.GetFileStreamAsync(attachment.FilePath);
+        return (stream, attachment.FileName, "application/octet-stream");
+    }
+
     private static AttachmentDto Map(Attachment a) => new(a.Id, a.FileName, a.FileSizeBytes, a.UploadedBy?.FullName ?? "", a.UploadedAt);
 }

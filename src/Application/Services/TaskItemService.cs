@@ -13,7 +13,7 @@ public class TaskItemService : ITaskItemService
 {
     private readonly IApplicationDbContext _context;
     private readonly ILogger<TaskItemService> _logger;
-    
+
     public TaskItemService(IApplicationDbContext context, ILogger<TaskItemService> logger)
     {
         _context = context;
@@ -93,6 +93,27 @@ public class TaskItemService : ITaskItemService
         _context.TaskItems.Remove(task);
         await _context.SaveChangesAsync();
         _logger.LogWarning("TaskItem {TaskId} deleted", id);
+    }
+
+    public async Task<PagedResult<TaskItemDto>> GetMyTasksAsync(int userId, string? status, string? priority, int page, int pageSize)
+    {
+        var query = _context.TaskItems.Where(t => t.AssignedToUserId == userId);
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(t => t.Status.ToString() == status);
+        if (!string.IsNullOrEmpty(priority))
+            query = query.Where(t => t.Priority.ToString() == priority);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(t => t.DueDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(t => new TaskItemDto(t.Id, t.Title, t.Description, t.Status.ToString(), t.Priority.ToString(), t.DueDate, t.ProjectId, t.AssignedTo!.FullName))
+            .AsNoTracking()
+            .ToListAsync();
+
+        return new PagedResult<TaskItemDto>(items, totalCount, page, pageSize);
     }
 
     private static TaskItemDto Map(TaskItem t) => new(

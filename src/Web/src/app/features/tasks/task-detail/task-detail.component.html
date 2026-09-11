@@ -1,0 +1,82 @@
+<!-- src/Web/src/app/features/tasks/task-detail/task-detail.component.html -->
+@if (loading()) {
+<div class="empty-state">Loading task...</div>
+} @else if (task(); as t) {
+<div class="detail-page">
+    <button class="btn-link" (click)="goBack()">← Back to Tasks</button>
+
+    <div class="detail-header">
+        <div>
+            <h1>{{ t.title }}</h1>
+            <p>{{ t.description || 'No description' }}</p>
+        </div>
+        @if (canEdit()) {
+        <button class="btn btn-outline-secondary"
+            [routerLink]="['/projects', t.projectId, 'tasks', t.id, 'edit']">Edit</button>
+        }
+    </div>
+
+    <div class="meta-badges">
+        <span class="status-badge" [class]="'status-' + t.status.toLowerCase()">{{ t.status }}</span>
+        <span class="priority-badge" [class]="'priority-' + t.priority.toLowerCase()">{{ t.priority }}</span>
+        @if (t.assignedToName) {
+        <span class="assignee-tag">Assigned to {{ t.assignedToName }}</span>
+        }
+        @if (t.dueDate) {
+        <span class="due-tag">Due {{ t.dueDate | date: 'mediumDate' }}</span>
+        }
+    </div>
+
+    <div class="section-grid">
+        <div class="card-section">
+            <h3>Comments</h3>
+
+            <div class="add-comment-row">
+                <textarea class="form-control" rows="2" placeholder="Write a comment..."
+                    [(ngModel)]="newComment"></textarea>
+                <button class="btn btn-primary" (click)="addComment()" [disabled]="!newComment.trim()">Post</button>
+            </div>
+
+            @if (comments().length === 0) {
+            <p class="text-muted">No comments yet.</p>
+            } @else {
+            <div class="comment-list">
+                @for (comment of comments(); track comment.id) {
+                <div class="comment-item">
+                    <div class="comment-meta">
+                        <strong>{{ comment.authorName }}</strong>
+                        <span>{{ comment.createdAt | date: 'short' }}</span>
+                    </div>
+                    <p>{{ comment.content }}</p>
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        <div class="card-section">
+            <h3>Attachments</h3>
+
+            <label class="upload-btn">
+                {{ uploading() ? 'Uploading...' : '+ Upload File' }}
+                <input type="file" hidden (change)="onFileSelected($event)" [disabled]="uploading()" />
+            </label>
+
+            @if (attachments().length === 0) {
+            <p class="text-muted">No attachments yet.</p>
+            } @else {
+            <div class="attachment-list">
+                @for (file of attachments(); track file.id) {
+                <div class="attachment-item">
+                    <button class="attachment-link" (click)="downloadAttachment(file)">{{ file.fileName }}</button>
+                    <button class="btn-icon" (click)="deleteAttachment(file.id)">✕</button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>
+} @else {
+<div class="empty-state">Task not found.</div>
+}

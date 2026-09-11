@@ -10,73 +10,88 @@ import { Project, ProjectMember } from '../../../shared/models/project.model';
 import { User } from '../../../shared/models/user.model';
 
 @Component({
-  selector: 'app-project-detail',
-  standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
-  templateUrl: './project-detail.component.html',
-  styleUrl: './project-detail.component.scss'
+    selector: 'app-project-detail',
+    standalone: true,
+    imports: [CommonModule, RouterLink, FormsModule],
+    templateUrl: './project-detail.component.html',
+    styleUrl: './project-detail.component.scss'
 })
 export class ProjectDetailComponent implements OnInit {
-  private projectService = inject(ProjectService);
-  private userService = inject(UserService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  authService = inject(AuthService);
+    private projectService = inject(ProjectService);
+    private userService = inject(UserService);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    authService = inject(AuthService);
 
-  project = signal<Project | null>(null);
-  members = signal<ProjectMember[]>([]);
-  allUsers = signal<User[]>([]);
-  loading = signal(true);
-  selectedUserId = '';
+    project = signal<Project | null>(null);
+    members = signal<ProjectMember[]>([]);
+    allUsers = signal<User[]>([]);
+    loading = signal(true);
+    selectedUserId = '';
 
-  // Users not already on the project — what the dropdown should actually show
-  availableUsers = computed(() => {
-    const memberIds = new Set(this.members().map(m => m.userId));
-    return this.allUsers().filter(u => !memberIds.has(u.id));
-  });
-
-  projectId!: number;
-
-  ngOnInit(): void {
-    this.projectId = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadProject();
-    this.loadMembers();
-    this.loadUsers();
-  }
-
-  loadProject(): void {
-    this.projectService.getById(this.projectId).subscribe({
-      next: p => { this.project.set(p); this.loading.set(false); },
-      error: () => this.loading.set(false)
+    // Users not already on the project — what the dropdown should actually show
+    availableUsers = computed(() => {
+        const memberIds = new Set(this.members().map(m => m.userId));
+        return this.allUsers().filter(u => !memberIds.has(u.id));
     });
-  }
 
-  loadMembers(): void {
-    this.projectService.getMembers(this.projectId).subscribe(members => this.members.set(members));
-  }
-
-  loadUsers(): void {
-    this.userService.getAll().subscribe(users => this.allUsers.set(users));
-  }
-
-  addMember(): void {
-    const userId = Number(this.selectedUserId);
-    if (!userId) return;
-    this.projectService.addMember(this.projectId, userId).subscribe(() => {
-      this.selectedUserId = '';
-      this.loadMembers();
+    canEdit = computed(() => {
+        const userId = Number(this.authService.currentUser()?.sub);
+        const isMember = this.members().some(m => m.userId === userId);
+        return isMember || this.authService.isAdmin();
     });
-  }
 
-  removeMember(userId: number): void {
-    this.projectService.removeMember(this.projectId, userId).subscribe(() => this.loadMembers());
-  }
+    projectId!: number;
 
-  goToTasks(): void {
-    this.router.navigate(['/projects', this.projectId, 'tasks']);
-  }
+    ngOnInit(): void {
+        this.projectId = Number(this.route.snapshot.paramMap.get('id'));
+        this.loadProject();
+        this.loadMembers();
+        this.loadUsers();
+    }
 
-  initials(title: string): string {
-    return title.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  }
+    loadProject(): void {
+        this.projectService.getById(this.projectId).subscribe({
+            next: p => { this.project.set(p); this.loading.set(false); },
+            error: () => this.loading.set(false)
+        });
+    }
+
+    loadMembers(): void {
+        this.projectService.getMembers(this.projectId).subscribe(members => this.members.set(members));
+    }
+
+    loadUsers(): void {
+        this.userService.getAll().subscribe(users => this.allUsers.set(users));
+    }
+
+    addMember(): void {
+        const userId = Number(this.selectedUserId);
+        if (!userId) return;
+        this.projectService.addMember(this.projectId, userId).subscribe(() => {
+            this.selectedUserId = '';
+            this.loadMembers();
+        });
+    }
+
+    removeMember(userId: number): void {
+        this.projectService.removeMember(this.projectId, userId).subscribe(() => this.loadMembers());
+    }
+
+    goToTasks(): void {
+        this.router.navigate(['/projects', this.projectId, 'tasks']);
+    }
+
+    initials(title: string): string {
+        return title.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    deleteProject(): void {
+        if (!confirm(`Delete "${this.project()?.title}"? This cannot be undone.`)) return;
+
+        this.projectService.delete(this.projectId).subscribe({
+            next: () => this.router.navigate(['/projects']),
+            error: () => alert('Failed to delete project.')
+        });
+    }
 }

@@ -28,6 +28,7 @@ import { AuthService } from '../shared/services/auth.service';
     <c-sidebar-nav>
       <a class="nav-link" routerLink="/dashboard">Dashboard</a>
       <a class="nav-link" routerLink="/projects">Projects</a>
+      <a class="nav-link" routerLink="/my-tasks">My Tasks</a>
       @if (authService.isAdmin()) {
         <a class="nav-link" routerLink="/users">Users</a>
       }

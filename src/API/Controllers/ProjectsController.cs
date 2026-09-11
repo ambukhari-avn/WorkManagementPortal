@@ -1,4 +1,5 @@
 // src/API/Controllers/ProjectsController.cs
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using EnterpriseWorkManagementPortal.Application.Interfaces;
 using EnterpriseWorkManagementPortal.Application.DTOs;
@@ -29,6 +30,16 @@ public class ProjectsController : ControllerBase
     [HttpPatch("{id}")]
     public async Task<IActionResult> Update(int id, UpdateProjectDto dto)
     {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var isAdmin = User.IsInRole("Admin");
+
+        if (!isAdmin)
+        {
+            var members = await _projectService.GetMembersAsync(id);
+            if (!members.Any(m => m.UserId == userId))
+                return Forbid();
+        }
+
         await _projectService.UpdateAsync(id, dto);
         return NoContent();
     }

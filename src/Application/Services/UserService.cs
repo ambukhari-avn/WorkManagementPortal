@@ -42,5 +42,26 @@ public class UserService : IUserService
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateRoleAsync(int userId, string role)
+    {
+        var user = await _context.Users.FindAsync(userId)
+            ?? throw new KeyNotFoundException("User not found.");
+
+        if (!Enum.TryParse<UserRole>(role, out var parsedRole))
+            throw new ArgumentException("Invalid role.");
+
+        user.Role = parsedRole;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId)
+            ?? throw new KeyNotFoundException("User not found.");
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+    }
+
     private static UserDto Map(User u) => new(u.Id, u.Email, u.FullName, u.Role.ToString(), u.CreatedAt);
 }

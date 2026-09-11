@@ -1,63 +1,146 @@
 <!-- src/Web/src/app/features/projects/project-detail/project-detail.component.html -->
+
 @if (loading()) {
 <div class="empty-state">Loading project...</div>
 } @else if (project(); as p) {
+
 <div class="detail-page">
+
     <div class="detail-header">
+
         <div class="header-info">
             <div class="project-avatar">{{ initials(p.title) }}</div>
+
             <div>
                 <h1>{{ p.title }}</h1>
                 <p>{{ p.description || 'No description' }}</p>
             </div>
         </div>
+
         <div class="header-actions">
-            <span class="badge" [class.bg-success]="!p.isArchived" [class.bg-secondary]="p.isArchived">
+            <span class="badge"
+                  [class.bg-success]="!p.isArchived"
+                  [class.bg-secondary]="p.isArchived">
                 {{ p.isArchived ? 'Archived' : 'Active' }}
             </span>
-            <button class="btn btn-outline-secondary" [routerLink]="['/projects', projectId, 'edit']">Edit</button>
-            <button class="btn btn-primary" (click)="goToTasks()">View Tasks</button>
+
+            @if (canEdit()) {
+            <button
+                class="btn btn-outline-secondary"
+                [routerLink]="['/projects', projectId, 'edit']">
+                Edit
+            </button>
+            }
+
+            @if (authService.isAdmin()) {
+            <button
+                class="btn btn-outline-danger"
+                (click)="deleteProject()">
+                Delete
+            </button>
+            }
+
+            <button
+                class="btn btn-primary"
+                (click)="goToTasks()">
+                View Tasks
+            </button>
         </div>
+
+        <div class="meta-row">
+            <span>
+                Created by <strong>{{ p.createdByName }}</strong>
+            </span>
+
+            <span>
+                {{ p.createdAt | date: 'mediumDate' }}
+            </span>
+        </div>
+
     </div>
 
-    <div class="meta-row">
-        <span>Created by <strong>{{ p.createdByName }}</strong></span>
-        <span>{{ p.createdAt | date: 'mediumDate' }}</span>
-    </div>
 
     <div class="card-section">
+
         <h3>Team Members</h3>
 
         <div class="add-member-row">
-            <select class="form-select" [(ngModel)]="selectedUserId">
-                <option value="">Select a user to add...</option>
+
+            <select
+                class="form-select"
+                [(ngModel)]="selectedUserId">
+
+                <option value="">
+                    Select a user to add...
+                </option>
+
                 @for (user of availableUsers(); track user.id) {
-                <option [value]="user.id">{{ user.fullName }} ({{ user.email }})</option>
+                <option [value]="user.id">
+                    {{ user.fullName }} ({{ user.email }})
+                </option>
                 }
+
             </select>
-            <button class="btn btn-primary" (click)="addMember()" [disabled]="!selectedUserId">Add</button>
+
+            <button
+                class="btn btn-primary"
+                (click)="addMember()"
+                [disabled]="!selectedUserId">
+                Add
+            </button>
+
         </div>
 
+
         @if (members().length === 0) {
-        <p class="text-muted">No members yet.</p>
+
+        <p class="text-muted">
+            No members yet.
+        </p>
+
         } @else {
+
         <div class="member-list">
+
             @for (member of members(); track member.userId) {
+
             <div class="member-item">
+
                 <div class="member-info">
-                    <div class="member-avatar">{{ initials(member.fullName) }}</div>
+
+                    <div class="member-avatar">
+                        {{ initials(member.fullName) }}
+                    </div>
+
                     <div>
                         <strong>{{ member.fullName }}</strong>
                         <span>{{ member.email }}</span>
                     </div>
+
                 </div>
-                <button class="btn btn-sm btn-outline-danger" (click)="removeMember(member.userId)">Remove</button>
+
+                <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="removeMember(member.userId)">
+                    Remove
+                </button>
+
             </div>
+
             }
+
         </div>
+
         }
+
     </div>
+
 </div>
+
 } @else {
-<div class="empty-state">Project not found.</div>
+
+<div class="empty-state">
+    Project not found.
+</div>
+
 }
