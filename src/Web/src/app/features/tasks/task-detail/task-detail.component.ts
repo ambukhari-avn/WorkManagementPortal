@@ -12,6 +12,8 @@ import { TaskItem } from '../../../shared/models/task.model';
 import { Comment } from '../../../shared/models/comment.model';
 import { Attachment } from '../../../shared/models/attachment.model';
 import { ProjectMember } from '../../../shared/models/project.model';
+import { AuditLogService } from '../../../shared/services/audit-log.service';
+import { AuditLog } from '../../../shared/models/audit-log.model';
 
 @Component({
   selector: 'app-task-detail',
@@ -28,6 +30,8 @@ export class TaskDetailComponent implements OnInit {
   private projectService = inject(ProjectService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private auditLogService = inject(AuditLogService);
+  activity = signal<AuditLog[]>([]);
 
   taskId!: number;
   task = signal<TaskItem | null>(null);
@@ -50,6 +54,7 @@ export class TaskDetailComponent implements OnInit {
     this.loadTask();
     this.loadComments();
     this.loadAttachments();
+    this.loadActivity();
   }
 
   loadTask(): void {
@@ -62,6 +67,10 @@ export class TaskDetailComponent implements OnInit {
       error: () => this.loading.set(false)
     });
   }
+
+  loadActivity(): void {
+  this.auditLogService.getByEntity('TaskItem', this.taskId).subscribe(a => this.activity.set(a));
+}
 
   loadComments(): void {
     this.commentService.getByTask(this.taskId).subscribe(c => this.comments.set(c));

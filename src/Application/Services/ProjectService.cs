@@ -12,10 +12,12 @@ public class ProjectService : IProjectService
 {
     private readonly IApplicationDbContext _context;
     private readonly ILogger<ProjectService> _logger;
-    public ProjectService(IApplicationDbContext context, ILogger<ProjectService> logger)
+    private readonly IAuditLogService _auditLogService;
+    public ProjectService(IApplicationDbContext context, ILogger<ProjectService> logger, IAuditLogService auditLogService)
     {
         _context = context;
         _logger = logger;
+        _auditLogService = auditLogService;
     }
 
     public async Task<ProjectDto?> GetByIdAsync(int id)
@@ -46,13 +48,15 @@ public class ProjectService : IProjectService
 
         return new PagedResult<ProjectDto>(items, totalCount, query.Page, query.PageSize);
     }
+
     public async Task<ProjectDto> CreateAsync(CreateProjectDto dto)
     {
         var project = new Project { Title = dto.Title, Description = dto.Description, CreatedByUserId = dto.CreatedByUserId };
         _context.Projects.Add(project);
         await _context.SaveChangesAsync();
-        await _context.Entry(project).Reference(p => p.CreatedBy).LoadAsync();  // load for the Map() call below
+        await _context.Entry(project).Reference(p => p.CreatedBy).LoadAsync();
         _logger.LogInformation("Project {ProjectId} created by User {UserId}", project.Id, dto.CreatedByUserId);
+        await _auditLogService.LogAsync("Project", project.Id, "Create", dto.CreatedByUserId);
         return Map(project);
     }
 
@@ -63,6 +67,7 @@ public class ProjectService : IProjectService
         if (dto.Description != null) project.Description = dto.Description;
         if (dto.IsArchived.HasValue) project.IsArchived = dto.IsArchived.Value;
         await _context.SaveChangesAsync();
+        await _auditLogService.LogAsync("Project", id, "Update", null);
     }
 
     public async Task DeleteAsync(int id)
@@ -71,6 +76,7 @@ public class ProjectService : IProjectService
         _context.Projects.Remove(project);
         await _context.SaveChangesAsync();
         _logger.LogWarning("Project {ProjectId} deleted", id);
+        await _auditLogService.LogAsync("Project", id, "Delete", null);
     }
 
     private static ProjectDto Map(Project p) => new(p.Id, p.Title, p.Description, p.IsArchived, p.CreatedBy?.FullName ?? "", p.CreatedAt);

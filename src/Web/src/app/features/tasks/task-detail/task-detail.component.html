@@ -28,7 +28,7 @@
     </div>
 
     <div class="section-grid">
-        <div class="card-section">
+        <div class="card-section" style="grid-area: comments;">
             <h3>Comments</h3>
 
             <div class="add-comment-row">
@@ -54,7 +54,7 @@
             }
         </div>
 
-        <div class="card-section">
+        <div class="card-section" style="grid-area: attachments;">
             <h3>Attachments</h3>
 
             <label class="upload-btn">
@@ -70,6 +70,25 @@
                 <div class="attachment-item">
                     <button class="attachment-link" (click)="downloadAttachment(file)">{{ file.fileName }}</button>
                     <button class="btn-icon" (click)="deleteAttachment(file.id)">✕</button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        <div class="card-section" style="grid-area: activity;">
+            <h3>Activity</h3>
+
+            @if (activity().length === 0) {
+            <p class="text-muted">No activity yet.</p>
+            } @else {
+            <div class="activity-list">
+                @for (entry of activity(); track entry.id) {
+                <div class="activity-item">
+                    <span class="activity-action" [class]="'action-' + entry.action.toLowerCase()">{{ entry.action
+                        }}</span>
+                    <span class="activity-text">by {{ entry.changedByName }}</span>
+                    <span class="activity-time">{{ entry.changedAt | date: 'short' }}</span>
                 </div>
                 }
             </div>

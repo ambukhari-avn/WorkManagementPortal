@@ -13,11 +13,13 @@ public class TaskItemService : ITaskItemService
 {
     private readonly IApplicationDbContext _context;
     private readonly ILogger<TaskItemService> _logger;
+    private readonly IAuditLogService _auditLogService;
 
-    public TaskItemService(IApplicationDbContext context, ILogger<TaskItemService> logger)
+    public TaskItemService(IApplicationDbContext context, ILogger<TaskItemService> logger, IAuditLogService auditLogService)
     {
         _context = context;
         _logger = logger;
+        _auditLogService = auditLogService;
     }
 
     public async Task<TaskItemDto?> GetByIdAsync(int id)
@@ -68,10 +70,11 @@ public class TaskItemService : ITaskItemService
         _context.TaskItems.Add(task);
         await _context.SaveChangesAsync();
         _logger.LogInformation("TaskItem {TaskId} created in Project {ProjectId}", task.Id, task.ProjectId);
+        await _auditLogService.LogAsync("TaskItem", task.Id, "Create", dto.AssignedToUserId);
         return Map(task);
     }
 
-    public async Task UpdateAsync(int id, UpdateTaskItemDto dto)
+    public async Task UpdateAsync(int id, UpdateTaskItemDto dto, int? changedByUserId)
     {
         var task = await _context.TaskItems.FindAsync(id)
             ?? throw new KeyNotFoundException($"TaskItem {id} not found.");
@@ -84,6 +87,7 @@ public class TaskItemService : ITaskItemService
 
         await _context.SaveChangesAsync();
         _logger.LogInformation("TaskItem {TaskId} updated", id);
+        await _auditLogService.LogAsync("TaskItem", id, "Update", changedByUserId);
     }
 
     public async Task DeleteAsync(int id)
@@ -93,6 +97,7 @@ public class TaskItemService : ITaskItemService
         _context.TaskItems.Remove(task);
         await _context.SaveChangesAsync();
         _logger.LogWarning("TaskItem {TaskId} deleted", id);
+        await _auditLogService.LogAsync("TaskItem", id, "Delete", null);
     }
 
     public async Task<PagedResult<TaskItemDto>> GetMyTasksAsync(int userId, string? status, string? priority, int page, int pageSize)
