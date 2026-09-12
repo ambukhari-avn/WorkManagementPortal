@@ -9,7 +9,13 @@ namespace EnterpriseWorkManagementPortal.Application.Services;
 public class CommentService : ICommentService
 {
     private readonly IApplicationDbContext _context;
-    public CommentService(IApplicationDbContext context) => _context = context;
+    private readonly IAuditLogService _auditLogService;
+
+    public CommentService(IApplicationDbContext context, IAuditLogService auditLogService)
+    {
+        _context = context;
+        _auditLogService = auditLogService;
+    }
 
     public async Task<List<CommentDto>> GetByTaskItemIdAsync(int taskItemId) =>
         (await _context.Comments.Include(c => c.Author)
@@ -22,6 +28,7 @@ public class CommentService : ICommentService
         _context.Comments.Add(comment);
         await _context.SaveChangesAsync();
         await _context.Entry(comment).Reference(c => c.Author).LoadAsync();
+        await _auditLogService.LogAsync("Comment", comment.Id, "Create", dto.AuthorUserId);
         return Map(comment);
     }
 
@@ -30,6 +37,7 @@ public class CommentService : ICommentService
         var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException($"Comment {id} not found.");
         _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();
+        await _auditLogService.LogAsync("Comment", id, "Delete", null);
     }
 
     private static CommentDto Map(Comment c) => new(c.Id, c.Content, c.Author?.FullName ?? "", c.CreatedAt);

@@ -47,6 +47,9 @@
 .section-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
+  grid-template-areas:
+    "comments attachments"
+    "activity activity";
   gap: 1.25rem;
 }
 
@@ -138,3 +141,29 @@
 
   &:hover { text-decoration: underline; }
 }
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f4f4f5;
+  font-size: 0.82rem;
+
+  &:last-child { border-bottom: none; }
+}
+
+.activity-action {
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.action-create { background: #dcfce7; color: #15803d; }
+.action-update { background: #dbeafe; color: #1d4ed8; }
+.action-delete { background: #fef2f2; color: #b91c1c; }
+
+.activity-text { color: #52525b; }
+.activity-time { color: #a1a1aa; margin-left: auto; }
