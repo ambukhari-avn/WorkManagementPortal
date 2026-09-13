@@ -88,6 +88,12 @@ builder.Services.AddRateLimiter(options =>
 
 builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
+// src/API/Program.cs
+builder.Services.AddCors(options =>
+    options.AddPolicy("AllowAngular", policy =>
+        policy.WithOrigins("http://localhost:4200", "http://localhost:8080")
+              .AllowAnyHeader().AllowAnyMethod()));
+
 var app = builder.Build();
 
 

@@ -1,14 +1,15 @@
 // src/Web/src/app/features/dashboard/dashboard.component.ts
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData } from 'chart.js';
 import { DashboardService } from '../../shared/services/dashboard.service';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, BaseChartDirective],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -19,10 +20,29 @@ export class DashboardComponent implements OnInit {
   summary = signal<DashboardSummary | null>(null);
   loading = signal(true);
 
+  chartData: ChartData<'doughnut'> = {
+    labels: ['Pending', 'In Progress', 'Completed'],
+    datasets: [{ data: [0, 0, 0], backgroundColor: ['#fbbf24', '#3b82f6', '#22c55e'] }]
+  };
+
+  chartOptions: ChartConfiguration<'doughnut'>['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' }
+    }
+  };
+
   ngOnInit(): void {
     this.dashboardService.getSummary().subscribe({
       next: data => {
         this.summary.set(data);
+        this.chartData = {
+          ...this.chartData,
+          datasets: [{
+            ...this.chartData.datasets[0],
+            data: [data.pendingTaskCount, data.inProgressTaskCount, data.completedTaskCount]
+          }]
+        };
         this.loading.set(false);
       },
       error: () => this.loading.set(false)

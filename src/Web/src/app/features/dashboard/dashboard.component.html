@@ -1,130 +1,136 @@
 <!-- src/Web/src/app/features/dashboard/dashboard.component.html -->
 @if (loading()) {
-  <div class="loading-state">Loading dashboard...</div>
+<div class="loading-state">Loading dashboard...</div>
 } @else if (summary(); as data) {
-  <div class="dashboard">
-    <div class="dashboard-header">
-      <div>
-        <h1>Dashboard</h1>
-        <p>Welcome back! Here's an overview of your work.</p>
-      </div>
-      <button class="btn btn-primary" (click)="goToNewProject()">+ New Project</button>
+<div class="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome back! Here's an overview of your work.</p>
     </div>
+    <button class="btn btn-primary" (click)="goToNewProject()">+ New Project</button>
+  </div>
 
-    <div class="row g-4">
-      <div class="col-md-6 col-xl-3">
-        <div class="stat-card">
-          <div class="stat-icon projects">📁</div>
-          <div>
-            <span class="stat-label">Projects</span>
-            <h2>{{ data.projectCount }}</h2>
-            <small>Active projects</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-xl-3">
-        <div class="stat-card">
-          <div class="stat-icon tasks">✓</div>
-          <div>
-            <span class="stat-label">Tasks</span>
-            <h2>{{ data.taskCount }}</h2>
-            <small>Total tasks</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-xl-3">
-        <div class="stat-card">
-          <div class="stat-icon completed">✓</div>
-          <div>
-            <span class="stat-label">Completed</span>
-            <h2>{{ data.completedTaskCount }}</h2>
-            <small>Tasks completed</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-xl-3">
-        <div class="stat-card">
-          <div class="stat-icon users">👥</div>
-          <div>
-            <span class="stat-label">Team Members</span>
-            <h2>{{ data.teamMemberCount }}</h2>
-            <small>Active members</small>
-          </div>
+  <div class="row g-4">
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon projects">📁</div>
+        <div>
+          <span class="stat-label">Projects</span>
+          <h2>{{ data.projectCount }}</h2>
+          <small>Active projects</small>
         </div>
       </div>
     </div>
 
-    <div class="row g-4 mt-1">
-      <div class="col-lg-8">
-        <div class="dashboard-card">
-          <div class="card-header">
-            <div>
-              <h3>Recent Projects</h3>
-              <p>Your latest projects</p>
-            </div>
-            <a routerLink="/projects">View all</a>
-          </div>
-
-          <div class="project-list">
-            @for (project of data.recentProjects; track project.id) {
-              <div class="project-item" [routerLink]="['/projects', project.id]">
-                <div class="project-info">
-                  <div class="project-avatar">{{ initials(project.title) }}</div>
-                  <div>
-                    <strong>{{ project.title }}</strong>
-                    <span>{{ project.taskCount }} tasks</span>
-                  </div>
-                </div>
-                <span class="badge" [class.bg-success]="!project.isArchived" [class.bg-secondary]="project.isArchived">
-                  {{ project.isArchived ? 'Archived' : 'Active' }}
-                </span>
-              </div>
-            } @empty {
-              <p class="text-muted">No projects yet.</p>
-            }
-          </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon tasks">✓</div>
+        <div>
+          <span class="stat-label">Tasks</span>
+          <h2>{{ data.taskCount }}</h2>
+          <small>Total tasks</small>
         </div>
       </div>
+    </div>
 
-      <div class="col-lg-4">
-        <div class="dashboard-card">
-          <div class="card-header">
-            <div>
-              <h3>Task Overview</h3>
-              <p>Current task status</p>
-            </div>
-          </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon completed">✓</div>
+        <div>
+          <span class="stat-label">Completed</span>
+          <h2>{{ data.completedTaskCount }}</h2>
+          <small>Tasks completed</small>
+        </div>
+      </div>
+    </div>
 
-          <div class="task-overview">
-            <div class="task-row">
-              <span>Pending</span>
-              <strong>{{ data.pendingTaskCount }}</strong>
-            </div>
-            <div class="progress mb-3">
-              <div class="progress-bar bg-warning" [style.width.%]="taskStatusPercent(data.pendingTaskCount)"></div>
-            </div>
-
-            <div class="task-row">
-              <span>In Progress</span>
-              <strong>{{ data.inProgressTaskCount }}</strong>
-            </div>
-            <div class="progress mb-3">
-              <div class="progress-bar bg-primary" [style.width.%]="taskStatusPercent(data.inProgressTaskCount)"></div>
-            </div>
-
-            <div class="task-row">
-              <span>Completed</span>
-              <strong>{{ data.completedTaskCount }}</strong>
-            </div>
-            <div class="progress">
-              <div class="progress-bar bg-success" [style.width.%]="taskStatusPercent(data.completedTaskCount)"></div>
-            </div>
-          </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon users">👥</div>
+        <div>
+          <span class="stat-label">Team Members</span>
+          <h2>{{ data.teamMemberCount }}</h2>
+          <small>Active members</small>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-8">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Recent Projects</h3>
+            <p>Your latest projects</p>
+          </div>
+          <a routerLink="/projects">View all</a>
+        </div>
+
+        <div class="project-list">
+          @for (project of data.recentProjects; track project.id) {
+          <div class="project-item" [routerLink]="['/projects', project.id]">
+            <div class="project-info">
+              <div class="project-avatar">{{ initials(project.title) }}</div>
+              <div>
+                <strong>{{ project.title }}</strong>
+                <span>{{ project.taskCount }} tasks</span>
+              </div>
+            </div>
+            <span class="badge" [class.bg-success]="!project.isArchived" [class.bg-secondary]="project.isArchived">
+              {{ project.isArchived ? 'Archived' : 'Active' }}
+            </span>
+          </div>
+          } @empty {
+          <p class="text-muted">No projects yet.</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div>
+            <h3>Task Overview</h3>
+            <p>Current task status</p>
+          </div>
+        </div>
+
+        <div class="task-overview">
+          <div class="chart-wrapper">
+            <canvas baseChart [data]="chartData" [options]="chartOptions" type="doughnut">
+            </canvas>
+          </div>
+          <div class="task-row">
+            <span>Pending</span>
+            <strong>{{ data.pendingTaskCount }}</strong>
+          </div>
+          <div class="progress mb-3">
+            <div class="progress-bar bg-warning" [style.width.%]="taskStatusPercent(data.pendingTaskCount)"></div>
+          </div>
+
+          <div class="task-row">
+            <span>In Progress</span>
+            <strong>{{ data.inProgressTaskCount }}</strong>
+          </div>
+          <div class="progress mb-3">
+            <div class="progress-bar bg-primary" [style.width.%]="taskStatusPercent(data.inProgressTaskCount)"></div>
+          </div>
+
+          <div class="task-row">
+            <span>Completed</span>
+            <strong>{{ data.completedTaskCount }}</strong>
+          </div>
+          
+          <div class="progress">
+            <div class="progress-bar bg-success" [style.width.%]="taskStatusPercent(data.completedTaskCount)"></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
 }
