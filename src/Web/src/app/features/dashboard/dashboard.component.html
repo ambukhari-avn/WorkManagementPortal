@@ -98,11 +98,12 @@
           </div>
         </div>
 
+        <div class="chart-wrapper">
+          <canvas baseChart [data]="chartData" [options]="chartOptions" type="doughnut"></canvas>
+        </div>
+
         <div class="task-overview">
-          <div class="chart-wrapper">
-            <canvas baseChart [data]="chartData" [options]="chartOptions" type="doughnut">
-            </canvas>
-          </div>
+          @if (data.pendingTaskCount > 0) {
           <div class="task-row">
             <span>Pending</span>
             <strong>{{ data.pendingTaskCount }}</strong>
@@ -110,7 +111,9 @@
           <div class="progress mb-3">
             <div class="progress-bar bg-warning" [style.width.%]="taskStatusPercent(data.pendingTaskCount)"></div>
           </div>
+          }
 
+          @if (data.inProgressTaskCount > 0) {
           <div class="task-row">
             <span>In Progress</span>
             <strong>{{ data.inProgressTaskCount }}</strong>
@@ -118,18 +121,19 @@
           <div class="progress mb-3">
             <div class="progress-bar bg-primary" [style.width.%]="taskStatusPercent(data.inProgressTaskCount)"></div>
           </div>
+          }
 
+          @if (data.completedTaskCount > 0) {
           <div class="task-row">
             <span>Completed</span>
             <strong>{{ data.completedTaskCount }}</strong>
           </div>
-          
           <div class="progress">
             <div class="progress-bar bg-success" [style.width.%]="taskStatusPercent(data.completedTaskCount)"></div>
           </div>
+          }
         </div>
       </div>
-      
     </div>
   </div>
 </div>

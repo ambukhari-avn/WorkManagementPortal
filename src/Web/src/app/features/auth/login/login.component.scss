@@ -159,7 +159,9 @@
 .password-wrapper {
   position: relative;
 
-  .form-control { padding-right: 2.5rem; }
+  .form-control {
+    padding-right: 2.75rem;
+  }
 
   .toggle-visibility {
     position: absolute;
@@ -169,6 +171,20 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1rem;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1aa;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #6366f1;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 }
