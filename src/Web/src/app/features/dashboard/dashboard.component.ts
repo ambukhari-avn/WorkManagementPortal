@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
   chartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     plugins: {
-      legend: { position: 'bottom' }
+      legend: { display: false }
     }
   };
 

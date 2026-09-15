@@ -47,10 +47,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// --- CORS ---
-builder.Services.AddCors(options =>
-    options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod()));
 
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -91,7 +87,7 @@ builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 // src/API/Program.cs
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:8080")
+        policy.WithOrigins("http://localhost:4200", "http://localhost:8080", "http://172.16.101.32:8080")
               .AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
